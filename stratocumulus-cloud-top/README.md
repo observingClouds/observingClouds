@@ -9,6 +9,14 @@ This folder contains:
 
 ## Running the notebook
 
+**In the browser, no install:** open [`open_in_marimo_app.html`](open_in_marimo_app.html), or copy the
+`https://marimo.app/#code/...` link from [`marimo_app_link.txt`](marimo_app_link.txt). The whole notebook
+is encoded in the link, which therefore reflects the notebook as of this commit. Alternatively
+use [marimo.app/github.com/observingClouds/observingClouds/blob/ccr-25ef950d-596rpj/stratocumulus-cloud-top/stratocumulus_cloud_top.py](https://marimo.app/github.com/observingClouds/observingClouds/blob/ccr-25ef950d-596rpj/stratocumulus-cloud-top/stratocumulus_cloud_top.py),
+which loads the file straight from GitHub.
+
+**Locally:**
+
 ```bash
 pip install marimo numpy matplotlib
 marimo edit stratocumulus_cloud_top.py      # editable notebook
