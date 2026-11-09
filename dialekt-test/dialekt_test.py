@@ -45,6 +45,7 @@ def _(mo):
 def _():
     import json
     import pathlib
+    import sys
     import urllib.request
 
     import marimo as mo
@@ -52,25 +53,36 @@ def _():
     import pandas as pd
     import plotly.graph_objects as go
 
-    return go, json, mo, np, pathlib, pd, urllib
+    return go, json, mo, np, pathlib, pd, sys, urllib
 
 
 @app.cell
-def _(json, mo, pathlib, urllib):
-    BASE_URL = "https://dialektkarten.ch/static/geojson/swg_v3/"
-    CACHE_DIR = pathlib.Path(mo.notebook_dir() or ".") / "data"
+def _(json, mo, pathlib, sys, urllib):
+    # Mirror of the dialektkarten.ch files in this repo: GitHub serves them with
+    # CORS headers, so the notebook also works in the browser (marimo.app/WASM).
+    MIRROR_URL = (
+        "https://raw.githubusercontent.com/observingClouds/observingClouds/"
+        "ccr-88fa4154-ofsc6h/dialekt-test/sds_v3/"
+    )
+    ORIGINAL_URL = "https://dialektkarten.ch/static/geojson/swg_v3/"
 
     def fetch_json(name):
-        """Download a JSON file from dialektkarten.ch (cached locally)."""
-        CACHE_DIR.mkdir(exist_ok=True)
-        path = CACHE_DIR / name
-        if not path.exists():
-            req = urllib.request.Request(
-                BASE_URL + name, headers={"User-Agent": "marimo-dialekt-test"}
-            )
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                path.write_bytes(resp.read())
-        return json.loads(path.read_text(encoding="utf-8"))
+        """Load an SDS file: local copy, else GitHub mirror (WASM), else original."""
+        try:
+            local = pathlib.Path(mo.notebook_dir()) / "sds_v3" / name
+            if local.exists():
+                return json.loads(local.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+        if "pyodide" in sys.modules:
+            from pyodide.http import open_url
+
+            return json.loads(open_url(MIRROR_URL + name).getvalue())
+        req = urllib.request.Request(
+            ORIGINAL_URL + name, headers={"User-Agent": "marimo-dialekt-test"}
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return json.loads(resp.read().decode("utf-8"))
 
     featuremaps_raw = fetch_json("featuremaps.json")
     points_raw = fetch_json("points.geojson")

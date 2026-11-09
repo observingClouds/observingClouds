@@ -18,8 +18,8 @@ uvx marimo edit --sandbox dialekt-test/dialekt_test.py   # edit the notebook
 The data comes from the digitized maps of the *Sprachatlas der deutschen Schweiz* (SDS), version 3:
 289 maps and 565 survey locations, published by Y. Scherrer, S. Kellerhals and R. Weiss on
 [dialektkarten.ch](https://dialektkarten.ch/mapviewer/swg/index.de.html).
-The notebook downloads `featuremaps.json` and `points.geojson` on its first run
-and caches them in `dialekt-test/data/`, which is git-ignored.
+An unmodified copy of `featuremaps.json` and `points.geojson` is in `sds_v3/`.
+GitHub serves it with CORS headers, which lets the notebook run in the browser on marimo.app.
 
 ## Features
 
